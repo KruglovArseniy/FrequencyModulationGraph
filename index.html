@@ -1,6 +1,6 @@
 <head>
     <title>Частотная модуляция</title>
-    
+
     <meta name='viewport' content='width = device-width, initial-scale = 1, shrink-to-fit = no'>
 
     <style>
@@ -90,12 +90,11 @@
     {
         string = input.value;
         binary_string = '';
-        line_height = 50;
+        line_height = 4 * scale;
 
         for (i = 0; i < string.length; i++)
             binary_string += '0' + string.charCodeAt(i).toString(2);
 
-        scale = 5;
         
         context = document.getElementById('canvas').getContext('2d');
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -114,7 +113,7 @@
                 else
                     value = Math.sin((x + width * line) / scale);
 
-                context.lineTo(x % width, y - scale * value);
+                context.lineTo(x % window.width, y - scale * value);
 
             }
 
@@ -122,6 +121,7 @@
         }
     }
 
+    window.scale = 15;
     Resize();
     window.addEventListener('resize', Resize);
 </script>
