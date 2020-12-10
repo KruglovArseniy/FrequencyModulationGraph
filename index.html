@@ -1,5 +1,7 @@
 <head>
     <title>Частотная модуляция</title>
+    
+    <meta name='viewport' content='width = device-width, initial-scale = 1, shrink-to-fit = no'>
 
     <style>
         @font-face
@@ -62,7 +64,7 @@
 
 <body>
     <div class='inputs'>
-        <input type='text' placeholder='Введите текст' oninput='Draw(this)'>
+        <input type='text' id='input' placeholder='Введите текст' oninput='Draw(this)'>
     </div>
 
     <div class='canvas'>
@@ -71,20 +73,24 @@
 </body>
 
 <script>
-    width = document.getElementsByClassName('canvas')[0].clientWidth - 22;
-    height = document.getElementsByClassName('canvas')[0].clientHeight - 25;
+    function Resize()
+    {
+        window.width = document.getElementsByClassName('canvas')[0].clientWidth - 22;
+        window.height = document.getElementsByClassName('canvas')[0].clientHeight - 25;
+        window.height = window.height - window.height % 100;
 
-    canvas = document.getElementById('canvas');
-    canvas.setAttribute ('width', width);
-    canvas.setAttribute ('height', height);
+        canvas = document.getElementById('canvas');
+        canvas.setAttribute ('width', width);
+        canvas.setAttribute ('height', height);
+
+        Draw(document.getElementById('input'));
+    }
 
     function Draw(input)
     {
-        width = document.getElementsByClassName('canvas')[0].clientWidth - 22;
-
-        frequency = 1;
         string = input.value;
         binary_string = '';
+        line_height = 50;
 
         for (i = 0; i < string.length; i++)
             binary_string += '0' + string.charCodeAt(i).toString(2);
@@ -92,21 +98,30 @@
         scale = 5;
         
         context = document.getElementById('canvas').getContext('2d');
-
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.beginPath();
-        context.moveTo(0, height / 2);
 
-        for (x = 0; x < width; x++)
+        for (line = 0; line < window.height / line_height - 1; line++)
         {
-            if ((binary_string[Math.trunc(x * frequency / 2 / Math.PI / scale)] == '0') || (binary_string[Math.trunc(x * frequency / 2 / Math.PI / scale)] == undefined))
-                value = 0;
-            else
-                value = Math.sin(x * frequency / scale);
+            context.beginPath();
+            context.moveTo(-1, 0);
 
-            context.lineTo(x, height / 2 - scale * value);
+            for (x = -1; x < window.width; x++)
+            {
+                y = line * line_height + line_height;
+
+                if ((binary_string[Math.trunc((x + width * line) / 2 / Math.PI / scale)] == '0') || (binary_string[Math.trunc((x + width * line) / 2 / Math.PI / scale)] == undefined))
+                    value = 0;
+                else
+                    value = Math.sin((x + width * line) / scale);
+
+                context.lineTo(x % width, y - scale * value);
+
+            }
+
+            context.stroke();
         }
-
-        context.stroke();
     }
+
+    Resize();
+    window.addEventListener('resize', Resize);
 </script>
